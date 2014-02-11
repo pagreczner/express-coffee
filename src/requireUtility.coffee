@@ -32,6 +32,7 @@ module.exports =
       manualHash[fileFunctionHash[0]] = 
         params: fileFunctionHash[1]
         swagger: fileFunctionHash[2]
+        comments: fileFunctionHash[3]
 
       # Loop over the new additional requires and add them sequentially,
       # so that we don't have nested arrays.
@@ -70,14 +71,27 @@ module.exports =
         catch e
           remaining.push uiRequire
 
-
       uniqInternals = remaining
 
       requireIters++
 
+    finalRequireFailures = []
     if uniqInternals.length > 0
-      console.log "#{uniqInternals.length} Modules failed to load: "
-      console.log (_.collect(uniqInternals, (ui) -> ui[1])).join(",")
+      # Let's force the dist directory on them
+      _.each uniqInternals, (ui) ->
+        ui[0] = ui[0].replace("/server","/dist/server")
+        try
+          localContext[ui[1]] = eval("require('#{ui[0]}')")
+          console.log "Loaded: #{ui}"
+        catch e
+          finalRequireFailures.push ui
+        
+        
+        
+
+
+      console.log "#{finalRequireFailures.length} Modules failed to load: "
+      console.log (_.collect(finalRequireFailures, (ui) -> ui[1])).join(",")
       
 
     # Let's do some special imports for our use case
@@ -100,6 +114,7 @@ module.exports =
       try
         localContext[contextName]['__man__'] = functionDatums.params
         localContext[contextName]['__swag__'] = functionDatums.swagger
+        localContext[contextName]['__cmnt__'] = functionDatums.comments
       catch e
 
       for functionName, params of functionDatums.params
@@ -111,6 +126,12 @@ module.exports =
         try
           localContext[contextName][functionName]['__swag__'] = swagg
         catch e
+
+      for functionName, comments of functionDatums.comments
+        try
+          localContext[contextName][functionName]['__cmnt__'] = comments
+        catch e
+        
           
         
     localContext.swag = (obj) ->
@@ -128,7 +149,21 @@ module.exports =
         console.log "No Swagger Entry Available."
       null
       
-          
+        
+    localContext.cmnt = (obj) ->
+      cmnt = obj.__cmnt__
+      if cmnt?
+        if typeof(cmnt) == 'string'
+          console.log cmnt
+        else
+          if typeof(cmnt) == 'object'
+            for functionName, _cmnt of cmnt
+              console.log "#{functionName}\n-------------"
+              if (not _cmnt?) or (_cmnt == "")
+                console.log "No Comment Entry Available.\n"
+      else
+        console.log "No Comment Entry Available."
+      null      
 
     localContext.man_partial = (obj) ->
       if obj.__man__?
@@ -147,6 +182,7 @@ module.exports =
       localContext.swag(obj)
       console.log "Usage:"
       localContext.man_partial(obj)
+      localContext.cmnt(obj)
 
       
 

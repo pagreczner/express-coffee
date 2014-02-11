@@ -2,6 +2,7 @@ fs = require 'fs'
 _ = require 'lodash'
 
 swaggerUtilityBaseObj = require './swaggerUtility'
+commentUtilityBaseObj = require './commentUtility'
 
 
 
@@ -17,10 +18,14 @@ module.exports =
     # Something to map the swagger
     swaggerMapper = {}
 
+    commentUtil = new commentUtilityBaseObj()
+    commentMapper = {}
+
     functionMap = {}
     # Loop over each line of code
     _.each lines, (line) =>
       swaggerUtil.addLine line
+      commentUtil.addLine line
 
       line = @cleanLine(line)
       if @isFunctionLine(line)
@@ -28,8 +33,10 @@ module.exports =
         functionMap[@getFunctionName(line)] = @getFunctionParams(line)
         swaggerMapper[@getFunctionName(line)] = swaggerUtil.getSwaggerDoc()
         swaggerUtil.reset()
+        commentMapper[@getFunctionName(line)] = commentUtil.getCommentDoc()
+        commentUtil.reset()
 
-    [@getFileName(absoluteFilePath), functionMap, swaggerMapper]
+    [@getFileName(absoluteFilePath), functionMap, swaggerMapper, commentMapper]
 
 
   # Determines true/false whether this is a function line or not
