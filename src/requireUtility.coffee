@@ -174,8 +174,18 @@ module.exports =
     if workingDir.split("/").last == "server"
       return workingDir
 
-    # Naive implementation, we just assume we are top level express and append
-    # server dir
+    # first check down
+    currentDirs = fs.readdirSync workingDir
+    return "#{workingDir}/server" if _(currentDirs).contains "server"
+
+    # Ok, we'll go up a maximum of 3 levels to check for a server dir
+    max_level_check = 3
+    checkLevel = 0
+    foundServerDir = false
+    while (not foundServerDir) and (checkLevel < max_level_check)
+      workingDir = workingDir.split("/")[0..-2].join("/")
+      foundServerDir = _(fs.readdirSync(workingDir)).contains "server"
+      checkLevel++
     return workingDir+"/server"
 
 
