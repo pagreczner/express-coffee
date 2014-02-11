@@ -21,9 +21,12 @@ module.exports =
         if line.indexOf("dotenv") >= 0
           requirables.push ["require('dotenv').load()", 'dotenv', false, 'eval']
         else
-          requireOfInterest = @getRequirePortion(line)
-          requirableTriplet = @parseRequire(currentWorkingDir, requireOfInterest)
-          requirables.push requirableTriplet
+          if @isEvalRequire(currentWorkingDir, line)
+            requirables.push @getEvalRequire(currentWorkingDir, line)
+          else
+            requireOfInterest = @getRequirePortion(line)
+            requirableTriplet = @parseRequire(currentWorkingDir, requireOfInterest)
+            requirables.push requirableTriplet
 
     requirables
 
@@ -77,7 +80,31 @@ module.exports =
       true
     ]
 
+  isEvalRequire: (workingDir, line) ->
+    requireIndex = line.indexOf("require")
+    requirePortion = line.slice(requireIndex)
+    startParen = requirePortion["require".length]
+    return false unless startParen == "("
+    dotIndex = requirePortion.indexOf(".",requirePortion.indexOf(")"))
+    return (dotIndex >= 0)
+    
 
+  getEvalRequire: (workingDir, line) ->
+    requireIndex = line.indexOf("require")
+    requirePortion = line.slice(requireIndex)
+    startParen = requirePortion["require".length]
+    dotIndex = requirePortion.indexOf(".",requirePortion.indexOf(")"))
+    commentHashTag = requirePortion.indexOf("#")
+
+    evalPortion = null
+    if commentHashTag > 0
+      evalPortion = requirePortion.slice(0,commentHashTag).trim()
+    else
+      evalPortion = requirePortion.trim()
+
+    requireName = line.split("=")[0].trim()
+
+    [evalPortion, requireName, false, 'named_eval']
 
 
   getRequirePortion: (line) ->

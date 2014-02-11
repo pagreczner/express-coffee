@@ -1,6 +1,10 @@
 fs = require 'fs'
 _ = require 'lodash'
 
+swaggerUtilityBaseObj = require './swaggerUtility'
+
+
+
 module.exports =
   createFunctionHash: (absoluteFilePath) ->
     # Read all the lines of code in the file at once
@@ -9,15 +13,23 @@ module.exports =
     # Split the long string into an array of lines
     lines = fileCode.split /\n/
 
+    swaggerUtil = new swaggerUtilityBaseObj()
+    # Something to map the swagger
+    swaggerMapper = {}
+
     functionMap = {}
     # Loop over each line of code
     _.each lines, (line) =>
+      swaggerUtil.addLine line
+
       line = @cleanLine(line)
       if @isFunctionLine(line)
         functionParams = @getFunctionParams line
         functionMap[@getFunctionName(line)] = @getFunctionParams(line)
+        swaggerMapper[@getFunctionName(line)] = swaggerUtil.getSwaggerDoc()
+        swaggerUtil.reset()
 
-    [@getFileName(absoluteFilePath), functionMap]
+    [@getFileName(absoluteFilePath), functionMap, swaggerMapper]
 
 
   # Determines true/false whether this is a function line or not

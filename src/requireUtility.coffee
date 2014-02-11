@@ -29,7 +29,9 @@ module.exports =
 
       # Read the file and create a function name to parameter mapping hash
       fileFunctionHash = functionReader.createFunctionHash fileName
-      manualHash[fileFunctionHash[0]] = fileFunctionHash[1]
+      manualHash[fileFunctionHash[0]] = 
+        params: fileFunctionHash[1]
+        swagger: fileFunctionHash[2]
 
       # Loop over the new additional requires and add them sequentially,
       # so that we don't have nested arrays.
@@ -55,7 +57,10 @@ module.exports =
       _.each uniqInternals, (uiRequire) ->
         try
           if uiRequire[3]?
-            localContext.eval(uiRequire[0])
+            if uiRequire[3] == 'eval'
+              localContext.eval(uiRequire[0])
+            if uiRequire[3] == 'named_eval'
+              localContext[uiRequire[1]] = localContext.eval(uiRequire[0])
           else
             if uiRequire[2]
               localContext[uiRequire[1]] = eval("require('#{uiRequire[0]}')")
@@ -64,6 +69,7 @@ module.exports =
           console.log "Loaded: #{uiRequire}"  
         catch e
           remaining.push uiRequire
+
 
       uniqInternals = remaining
 
@@ -90,32 +96,60 @@ module.exports =
     localContext.LD = require 'lodash'
 
     # Load the Manual Data
-    for contextName, functionData of manualHash
+    for contextName, functionDatums of manualHash
       try
-        localContext[contextName]['__man_func__'] = functionData
+        localContext[contextName]['__man__'] = functionDatums.params
+        localContext[contextName]['__swag__'] = functionDatums.swagger
       catch e
 
-      for functionName, params of functionData
+      for functionName, params of functionDatums.params
         try 
           localContext[contextName][functionName]['__man__'] = "#{contextName}.#{functionName} (#{params.join(', ')})"
         catch e
+
+      for functionName, swagg of functionDatums.swagger
+        try
+          localContext[contextName][functionName]['__swag__'] = swagg
+        catch e
+          
+        
+    localContext.swag = (obj) ->
+      swag = obj.__swag__
+      if swag?
+        if typeof(swag) == 'string'
+          console.log swag
+        else
+          if typeof(swag) == 'object'
+            for functionName, _swag of swag
+              console.log "#{functionName}\n--------------"
+              if (not _swag?) or (_swag == "")
+                console.log "No Swagger Entry Available.\n"
+      else
+        console.log "No Swagger Entry Available."
+      null
+      
           
 
-    localContext.man = (obj) ->
+    localContext.man_partial = (obj) ->
       if obj.__man__?
-        console.log obj.__man__
+        data = obj.__man__
+        if typeof(data) == 'string'
+          console.log obj.__man__
+        else
+          if typeof(data) == 'object'
+            for functionName, params of obj.__man__
+              console.log "#{functionName} (#{params.join(', ')})"    
       else
-        console.log "No Manual Entry"
+        console.log "No Manual Entry Available."
       null
 
-    localContext.manfunc = (obj) ->
-      if obj.__man_func__?
-        for functionName, params of obj.__man_func__
-          console.log "#{functionName} (#{params.join(', ')})"
-      else
-        console.log "No Function Manual Available"
-      null
-    #localContext.campaignRepository.createCampaign.__man__ = "hello"
+    localContext.man = (obj) ->
+      localContext.swag(obj)
+      console.log "Usage:"
+      localContext.man_partial(obj)
+
+      
+
 
     console.log "****************************************"
     console.log "Welcome to the expressCoffee console!"
