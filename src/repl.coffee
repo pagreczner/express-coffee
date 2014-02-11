@@ -4,9 +4,10 @@ vm = require 'vm'
 nodeREPL = require 'repl'
 CoffeeScript = require './coffee-script'
 {merge, updateSyntaxError} = require './helpers'
+requireUtility = require './requireUtility'
 
 replDefaults =
-  prompt: 'coffee> ',
+  prompt: 'expressCoffee> ',
   historyFile: path.join process.env.HOME, '.coffee_history' if process.env.HOME
   historyMaxInputSize: 10240
   eval: (input, context, filename, cb) ->
@@ -125,6 +126,9 @@ addHistory = (repl, filename, maxSize) ->
 
 module.exports =
   start: (opts = {}) ->
+    # Determine our working directory
+    workingDir = process.cwd()
+    
     [major, minor, build] = process.versions.node.split('.').map (n) -> parseInt(n)
 
     if major is 0 and minor < 8
@@ -135,6 +139,7 @@ module.exports =
     process.argv = ['coffee'].concat process.argv[2..]
     opts = merge replDefaults, opts
     repl = nodeREPL.start opts
+    requireUtility.importRequires repl.context, workingDir
     repl.on 'exit', -> repl.outputStream.write '\n'
     addMultilineHandler repl
     addHistory repl, opts.historyFile, opts.historyMaxInputSize if opts.historyFile
