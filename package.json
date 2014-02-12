@@ -24,7 +24,7 @@
     "cake": "./bin/cake"
   },
   "scripts": {
-    "install": "node ./bin/cake install",
+    "install": "node ./bin/cake install"
   },
   "homepage": "http://isocket.com",
   "bugs": "https://github.com/pagreczner/express-coffee/issues",
