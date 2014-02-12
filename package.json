@@ -20,7 +20,7 @@
   },
   "main": "./lib/coffee-script/coffee-script",
   "bin": {
-    "coffee": "./bin/coffee",
+    "ecoffee": "./bin/coffee",
     "cake": "./bin/cake"
   },
   "scripts": {
