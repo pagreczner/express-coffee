@@ -10,7 +10,7 @@
     "console"
   ],
   "author": "Peter Greczner",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "license": "MIT",
   "engines": {
     "node": ">=0.8.0"
@@ -20,7 +20,7 @@
   },
   "main": "./lib/coffee-script/coffee-script",
   "bin": {
-    "coffee": "./bin/ecoffee"
+    "expresso": "./bin/coffee"
   },
   "scripts": {
   },
