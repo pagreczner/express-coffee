@@ -1,50 +1,44 @@
-            {
-         }   }   {
-        {   {  }  }
-         }   }{  {
-        {  }{  }  }                    _____       __  __
-       { }{ }{  { }                   / ____|     / _|/ _|
-     .- { { }  { }} -.               | |     ___ | |_| |_ ___  ___
-    (  { } { } { } }  )              | |    / _ \|  _|  _/ _ \/ _ \
-    |`-..________ ..-'|              | |___| (_) | | | ||  __/  __/
-    |                 |               \_____\___/|_| |_| \___|\___|
-    |                 ;--.
-    |                (__  \            _____           _       _
-    |                 | )  )          / ____|         (_)     | |
-    |                 |/  /          | (___   ___ _ __ _ _ __ | |_
-    |                 (  /            \___ \ / __| '__| | '_ \| __|
-    |                 |/              ____) | (__| |  | | |_) | |_
-    |                 |              |_____/ \___|_|  |_| .__/ \__|
-     `-.._________..-'                                  | |
-                                                        |_|
+  Node-Expresso is a fork of the popular coffee-script project by @jashkenas.
 
+  It provides a coffee-script console that is meant to be run from within
+  your Express project file structure.  It auto requires all modules needed
+  for that express application. And it also finds all inline documentation for
+  the methods.
 
-  CoffeeScript is a little language that compiles into JavaScript.
+  Installing:
+  > npm install -g node-expresso
 
-  If you have the Node Package Manager installed:
-  npm install -g coffee-script
-  (Leave off the -g if you don't wish to install globally.)
+  Running the command line:
+  > cd ~/myExpressProjectRoute
+  > expresso
 
-  Or, if you don't wish to use npm:
-  sudo bin/cake install
+  Expresso will now load all the required files and for any which it can not load
+  it will print them out.  From here you have a coffee console at your disposal.
 
-  Execute a script:
-  coffee /path/to/script.coffee
+  ```
+  expressCoffee> console.log "Hello World"
+  ```
 
-  Compile a script:
-  coffee -c /path/to/script.coffee
+  For modules which it has auto required, Expresso attempts to find inline documentation
+  for them and you can use a built-in 'man' command to see it.
 
-  For documentation, usage, and examples, see:
-  http://coffeescript.org/
+  ```
+  expressCoffee> man userRepo.createNewUser
+  Usage:
+  userRep.createNewUser (first, last, age)
+  This method creates a new user and stores them in the database.  It returns back
+  the user id of the newly created user.
+  Inputs:
+     String: first - the first name
+     String: last - the last name
+     age: int - the users age
+  ```
 
-  To suggest a feature, report a bug, or general discussion:
-  http://github.com/jashkenas/coffee-script/issues/
+  Expresso is a continuing work in progress, so not all node Express applications
+  may work 100% with the current functionality.  And, it assumes you have a /server
+  folder in your Express project.
 
-  If you'd like to chat, drop by #coffeescript on Freenode IRC,
-  or on webchat.freenode.net.
+  ---------------
 
-  The source repository:
-  git://github.com/jashkenas/coffee-script.git
+  For more information on CoffeeScript, check out: http://coffeescript.org/
 
-  Top 100 contributors are listed here:
-  http://github.com/jashkenas/coffee-script/contributors
