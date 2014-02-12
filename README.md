@@ -6,11 +6,15 @@ for that express application. And it also finds all inline documentation for
 the methods.
 
 Installing:
+```
 > npm install -g node-expresso
+```
 
 Running the command line:
+```
 > cd ~/myExpressProjectRoute
 > expresso
+```
 
 Expresso will now load all the required files and for any which it can not load
 it will print them out.  From here you have a coffee console at your disposal.
