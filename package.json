@@ -1,14 +1,16 @@
 {
-  "name": "coffee-script",
-  "description": "Unfancy JavaScript",
+  "name": "node-expresso",
+  "description": "Node Express Coffee Console",
   "keywords": [
     "javascript",
     "language",
     "coffeescript",
-    "compiler"
+    "compiler",
+    "express",
+    "console"
   ],
-  "author": "Jeremy Ashkenas",
-  "version": "1.7.1",
+  "author": "Peter Greczner",
+  "version": "0.1.0",
   "license": "MIT",
   "engines": {
     "node": ">=0.8.0"
@@ -22,13 +24,13 @@
     "cake": "./bin/cake"
   },
   "scripts": {
-    "test": "node ./bin/cake test"
+    "install": "node ./bin/cake install",
   },
-  "homepage": "http://coffeescript.org",
-  "bugs": "https://github.com/jashkenas/coffee-script/issues",
+  "homepage": "http://isocket.com",
+  "bugs": "https://github.com/pagreczner/express-coffee/issues",
   "repository": {
     "type": "git",
-    "url": "git://github.com/jashkenas/coffee-script.git"
+    "url": "git@github.com:pagreczner/express-coffee.git"
   },
   "devDependencies": {
     "uglify-js": "~2.2",
